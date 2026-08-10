@@ -1,0 +1,442 @@
+{
+  "info": {
+    "name": "Celebrity Booking Platform API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "1. Public (No Auth)",
+      "item": [
+        {
+          "name": "Health Check",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/public/health",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "public", "health"]
+            }
+          }
+        },
+        {
+          "name": "Get Categories",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/public/categories",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "public", "categories"]
+            }
+          }
+        },
+        {
+          "name": "Discover Celebrities",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/public/celebrities?category=Musician&minPrice=10000&maxPrice=50000&search=Rohan",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "public", "celebrities"],
+              "query": [
+                { "key": "category", "value": "Musician" },
+                { "key": "minPrice", "value": "10000" },
+                { "key": "maxPrice", "value": "50000" },
+                { "key": "search", "value": "Rohan" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Celebrity Profile",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/public/celebrities/{{celebrityId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "public", "celebrities", "{{celebrityId}}"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "2. Auth",
+      "item": [
+        {
+          "name": "Register",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"phoneNumber\": \"+918888888888\",\n  \"name\": \"John Doe\",\n  \"email\": \"john.doe@example.com\",\n  \"password\": \"password123\",\n  \"role\": \"user\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/auth/register",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "auth", "register"]
+            }
+          }
+        },
+        {
+          "name": "Login",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"emailOrPhone\": \"john.doe@example.com\",\n  \"password\": \"password123\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/auth/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "auth", "login"]
+            }
+          }
+        },
+        {
+          "name": "Request OTP",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"phoneNumber\": \"+918888888888\",\n  \"type\": \"login\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/auth/otp/request",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "auth", "otp/request"]
+            }
+          }
+        },
+        {
+          "name": "Verify OTP",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"phoneNumber\": \"+918888888888\",\n  \"code\": \"123456\",\n  \"type\": \"verify_phone\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/auth/otp/verify",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "auth", "otp/verify"]
+            }
+          }
+        },
+        {
+          "name": "Get Profile",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/auth/profile",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "auth", "profile"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "3. User Client",
+      "item": [
+        {
+          "name": "Add Address",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"addressLine1\": \"Flat 202, Royal Enclave\",\n  \"city\": \"Mumbai\",\n  \"state\": \"Maharashtra\",\n  \"country\": \"India\",\n  \"postalCode\": \"400001\",\n  \"isPrimary\": true\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/user/addresses",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "user", "addresses"]
+            }
+          }
+        },
+        {
+          "name": "Get Addresses",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/user/addresses",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "user", "addresses"]
+            }
+          }
+        },
+        {
+          "name": "Create Booking",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"celebrityId\": \"{{celebrityId}}\",\n  \"addressId\": \"{{addressId}}\",\n  \"appearanceType\": \"live_performance\",\n  \"amount\": 20000.00,\n  \"eventDetails\": {\n    \"eventName\": \"Club Gig\",\n    \"description\": \"Live appearance\",\n    \"date\": \"2026-09-01T18:00:00.000Z\"\n  }\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/user/bookings",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "user", "bookings"]
+            }
+          }
+        },
+        {
+          "name": "Checkout Payment",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"bookingId\": \"{{bookingId}}\",\n  \"paymentMethod\": \"card\",\n  \"paymentGateway\": \"stripe\",\n  \"gatewayTransactionId\": \"ch_mock_tx_77\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/user/payments",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "user", "payments"]
+            }
+          }
+        },
+        {
+          "name": "Get Notifications",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/user/notifications",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "user", "notifications"]
+            }
+          }
+        },
+        {
+          "name": "Submit Review",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"bookingId\": \"{{bookingId}}\",\n  \"rating\": 5,\n  \"review\": \"Outstanding performance! Highly recommend Rohan!\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/user/reviews",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "user", "reviews"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "4. Celebrity",
+      "item": [
+        {
+          "name": "Get Dashboard",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/celebrity/dashboard",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "celebrity", "dashboard"]
+            }
+          }
+        },
+        {
+          "name": "Update Pricing",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"minimumPrice\": 15000.00,\n  \"maximumPrice\": 60000.00\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/celebrity/pricing",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "celebrity", "pricing"]
+            }
+          }
+        },
+        {
+          "name": "Approve Booking Request",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/celebrity/bookings/{{bookingId}}/approve",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "celebrity", "bookings", "{{bookingId}}", "approve"]
+            }
+          }
+        },
+        {
+          "name": "Create Event Gallery",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"eventName\": \"Super Concert 2026\",\n  \"eventType\": \"concert\",\n  \"eventDate\": \"2026-05-15\",\n  \"eventLocation\": \"Grand Arena, Mumbai\",\n  \"eventDescription\": \"Grand arena musical concert night\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/celebrity/galleries",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "celebrity", "galleries"]
+            }
+          }
+        },
+        {
+          "name": "Add Portfolio Item",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Live Performance Snapshot\",\n  \"mediaType\": \"image\",\n  \"mediaUrl\": \"https://mock-cloudfront-url.com/portfolio/concert_pic.png\",\n  \"category\": \"musician\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/celebrity/portfolio",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "celebrity", "portfolio"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "5. Admin",
+      "item": [
+        {
+          "name": "Get Dashboard Stats",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/dashboard",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "admin", "dashboard"]
+            }
+          }
+        },
+        {
+          "name": "Approve Celebrity profile",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/celebrities/{{celebrityId}}/approve",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "admin", "celebrities", "{{celebrityId}}", "approve"]
+            }
+          }
+        },
+        {
+          "name": "Release Escrow Payout",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/payments/{{paymentId}}/release",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "admin", "payments", "{{paymentId}}", "release"]
+            }
+          }
+        },
+        {
+          "name": "Set Global Commission Settings",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"platformFeePercentage\": 8.00,\n  \"commissionPercentage\": 12.00,\n  \"releaseDays\": 10\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/commissions",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "admin", "commissions"]
+            }
+          }
+        },
+        {
+          "name": "Resolve Dispute",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"resolution\": \"Issue resolved in favor of user, refund issued.\",\n  \"action\": \"refund\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/disputes/{{disputeId}}/resolve",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "admin", "disputes", "{{disputeId}}", "resolve"]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
