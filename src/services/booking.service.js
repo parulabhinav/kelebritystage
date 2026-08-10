@@ -21,6 +21,10 @@ const createBookingRequest = async (userId, { celebrityId, addressId, appearance
       throw new AppError('Celebrity is not available or approved', 400);
     }
 
+    if (celebrity.availabilityStatus !== 'available') {
+      throw new AppError('Celebrity is currently busy or not available for new bookings', 400);
+    }
+
     // 3. Calculate Commission Split
     const splits = await calculateSplit(amount, celebrityId);
     

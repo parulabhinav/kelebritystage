@@ -1,4 +1,4 @@
-require('dotenv').config(); // Trigger nodemon reload  
+require('dotenv').config(); // Trigger nodemon reload
 const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
@@ -52,11 +52,7 @@ const startServer = async () => {
     await sequelize.authenticate();
     logger.info('PostgreSQL Database connected successfully.');
 
-    // 2. Sync Models (Automatically create tables for easy local development without separate migrations)
-    await sequelize.sync({ alter: true });
-    logger.info('Database models synced.');
-
-    // 3. Connect Redis Client
+    // 2. Connect Redis Client
     try {
       await redisClient.connect();
     } catch (redisErr) {
