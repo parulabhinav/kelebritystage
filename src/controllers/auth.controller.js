@@ -52,7 +52,7 @@ const verifyOTP = async (req, res, next) => {
         return res.status(400).json({ success: false, message: 'User registration details (name) required for new phone number' });
       }
       
-      const targetRole = role && ['user', 'celebrity'].includes(role) ? role : 'user';
+      const targetRole = role && ['user', 'celebrity','admin'].includes(role) ? role : 'user';
       
       user = await User.create({
         phoneNumber,
