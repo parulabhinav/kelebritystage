@@ -165,12 +165,16 @@ const updateAvailability = async (req, res, next) => {
   } catch (error) {
     next(error);
   }
-};
-
-const getAvailability = async (req, res, next) => {
+};const getAvailability = async (req, res, next) => {
   try {
     const celebrity = await getCelebrityOrThrow(req.user.id);
-    return res.status(200).json({ success: true, data: { availabilityStatus: celebrity.availabilityStatus } });
+    return res.status(200).json({ 
+      success: true, 
+      data: { 
+        availabilityStatus: celebrity.availabilityStatus,
+        blockedDates: celebrity.blockedDates || []
+      } 
+    });
   } catch (error) {
     next(error);
   }
@@ -178,17 +182,19 @@ const getAvailability = async (req, res, next) => {
 
 const blockDates = async (req, res, next) => {
   try {
-    // Blocks out dates (mock implementation by updating availability metadata)
     const celebrity = await getCelebrityOrThrow(req.user.id);
-    const { startDate, endDate } = req.body;
+    const { blockedDates } = req.body; // Expecting string array like ["2026-09-10"]
 
-    celebrity.availabilityStatus = 'busy';
+    if (Array.isArray(blockedDates)) {
+      celebrity.blockedDates = blockedDates;
+    }
+    
     await celebrity.save();
 
     return res.status(200).json({
       success: true,
-      message: 'Dates blocked successfully',
-      data: { blockedRange: { startDate, endDate } }
+      message: 'Blocked dates updated successfully',
+      data: { blockedDates: celebrity.blockedDates }
     });
   } catch (error) {
     next(error);

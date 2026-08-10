@@ -5,7 +5,8 @@ const {
   getPublicCategories,
   getCelebritiesByCategory,
   healthCheck,
-  seedDatabase
+  seedDatabase,
+  getPublicCelebrityAvailability
 } = require('../controllers/public.controller');
 
 // Health check
@@ -17,6 +18,7 @@ router.post('/seed', seedDatabase);
 // Celebrity discovery
 router.get('/celebrities', getPublicCelebrities);
 router.get('/celebrities/:id', getPublicCelebrityDetails);
+router.get('/celebrities/:id/availability', getPublicCelebrityAvailability);
 
 // Categories
 router.get('/categories', getPublicCategories);

@@ -1,4 +1,4 @@
-const { Celebrity, User, Category, CelebrityPortfolio, EventGallery, EventGalleryMedia } = require('../models');
+const { Celebrity, User, Category, CelebrityPortfolio, EventGallery, EventGalleryMedia, Event } = require('../models');
 const { Op } = require('sequelize');
 
 const healthCheck = (req, res) => {
@@ -11,7 +11,7 @@ const healthCheck = (req, res) => {
 
 const getPublicCelebrities = async (req, res, next) => {
   try {
-    const { category, minPrice, maxPrice, search, limit = 10, offset = 0 } = req.query;
+    const { category, minPrice, maxPrice, search, date, limit = 10, offset = 0 } = req.query;
 
     const whereClause = {
       isApproved: true,
@@ -30,6 +30,45 @@ const getPublicCelebrities = async (req, res, next) => {
       if (maxPrice) whereClause.minimumPrice[Op.lte] = parseFloat(maxPrice);
     }
 
+    // Date Availability Search Filter
+    if (date) {
+      const startOfDay = new Date(date);
+      startOfDay.setUTCHours(0, 0, 0, 0);
+      const endOfDay = new Date(date);
+      endOfDay.setUTCHours(23, 59, 59, 999);
+
+      // 1. Get IDs of celebrities with scheduled bookings on this date
+      const busyEvents = await Event.findAll({
+        where: {
+          status: 'scheduled',
+          eventDate: {
+            [Op.between]: [startOfDay, endOfDay]
+          }
+        },
+        attributes: ['celebrityId']
+      });
+      const busyCelebIds = busyEvents.map(e => e.celebrityId);
+
+      // 2. Get IDs of celebrities who blocked this date manually
+      const blockedCelebs = await Celebrity.findAll({
+        where: {
+          blockedDates: {
+            [Op.contains]: [date]
+          }
+        },
+        attributes: ['id']
+      });
+      const blockedCelebIds = blockedCelebs.map(c => c.id);
+
+      // Combine and filter out unavailable celebrities
+      const unavailableIds = [...new Set([...busyCelebIds, ...blockedCelebIds])];
+      if (unavailableIds.length > 0) {
+        whereClause.id = {
+          [Op.notIn]: unavailableIds
+        };
+      }
+    }
+
     const userWhereClause = {};
     if (search) {
       userWhereClause.name = {
@@ -43,6 +82,7 @@ const getPublicCelebrities = async (req, res, next) => {
         model: User,
         as: 'user',
         where: userWhereClause,
+
         attributes: ['name', 'email', 'profileImage']
       }],
       limit: parseInt(limit, 10),
@@ -243,11 +283,47 @@ const seedDatabase = async (req, res, next) => {
   }
 };
 
+const getPublicCelebrityAvailability = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    
+    const celebrity = await Celebrity.findByPk(id);
+    if (!celebrity) {
+      return res.status(404).json({ success: false, message: 'Celebrity not found' });
+    }
+
+    const scheduledEvents = await Event.findAll({
+      where: {
+        celebrityId: id,
+        status: 'scheduled'
+      },
+      attributes: ['eventDate']
+    });
+
+    const bookedDates = scheduledEvents.map(e => {
+      return new Date(e.eventDate).toISOString().split('T')[0];
+    });
+
+    return res.status(200).json({
+      success: true,
+      data: {
+        availabilityStatus: celebrity.availabilityStatus,
+        blockedDates: celebrity.blockedDates || [],
+        bookedDates: bookedDates
+      }
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   healthCheck,
   getPublicCelebrities,
   getPublicCelebrityDetails,
   getPublicCategories,
   getCelebritiesByCategory,
-  seedDatabase
+  seedDatabase,
+  getPublicCelebrityAvailability
 };
+

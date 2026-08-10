@@ -116,6 +116,11 @@ module.exports = (sequelize) => {
         isIn: [['available', 'busy', 'on_leave', 'not_available']]
       }
     },
+    blockedDates: {
+      type: DataTypes.ARRAY(DataTypes.STRING(10)),
+      defaultValue: [],
+      field: 'blocked_dates'
+    },
     lastProfileUpdate: {
       type: DataTypes.DATE,
       field: 'last_profile_update'

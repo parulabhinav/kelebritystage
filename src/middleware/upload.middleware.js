@@ -1,27 +1,21 @@
+const multer = require('multer');
+
+// Store files in memory so they are available as Buffer for upload services
+const storage = multer.memoryStorage();
+
+const uploadConfig = multer({
+  storage: storage,
+  limits: {
+    fileSize: 10 * 1024 * 1024 // Limit files to 10MB
+  }
+});
+
 const upload = {
   fields: (fieldsArray) => {
-    return (req, res, next) => {
-      // Stub multipart file parsing and attach dummy files if mock file upload is triggered
-      req.files = {};
-      fieldsArray.forEach(f => {
-        req.files[f.name] = [{
-          originalname: `mock_${f.name}.png`,
-          buffer: Buffer.from('mock_data'),
-          mimetype: 'image/png'
-        }];
-      });
-      next();
-    };
+    return uploadConfig.fields(fieldsArray);
   },
   single: (fieldName) => {
-    return (req, res, next) => {
-      req.file = {
-        originalname: `mock_${fieldName}.png`,
-        buffer: Buffer.from('mock_data'),
-        mimetype: 'image/png'
-      };
-      next();
-    };
+    return uploadConfig.single(fieldName);
   }
 };
 
