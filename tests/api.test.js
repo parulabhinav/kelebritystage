@@ -158,6 +158,40 @@ describe('Phase 1 - Backend API & Authentication Test Suite', () => {
     }
   });
 
+  test('4b. POST /api/v1/auth/register (Admin Registration)', async () => {
+    try {
+      const adminPhone = `+9198${Date.now().toString().slice(-8)}`;
+      const adminEmail = `admin-test-${Date.now()}@example.com`;
+      const res = await request(app)
+        .post('/api/v1/auth/register')
+        .send({
+          phoneNumber: adminPhone,
+          name: 'Automated Test Admin',
+          email: adminEmail,
+          password: testPassword,
+          role: 'admin'
+        });
+
+      expect(res.statusCode).toBe(201);
+      expect(res.body.success).toBe(true);
+      expect(res.body.data?.userId).toBeDefined();
+
+      const adminId = res.body.data.userId;
+      const dbUser = await User.findByPk(adminId);
+      expect(dbUser).not.toBeNull();
+      expect(dbUser.role).toBe('admin');
+
+      // Cleanup
+      await Verification.destroy({ where: { userId: adminId } }).catch(() => {});
+      await Wallet.destroy({ where: { userId: adminId } }).catch(() => {});
+      await User.destroy({ where: { id: adminId } }).catch(() => {});
+      recordResult('POST /api/v1/auth/register (Admin)', 'AUTHENTICATION', true);
+    } catch (err) {
+      recordResult('POST /api/v1/auth/register (Admin)', 'AUTHENTICATION', false, err.message);
+      throw err;
+    }
+  });
+
   test('5. POST /api/v1/auth/otp/verify', async () => {
     try {
       // Cleanly retrieve OTP directly from DB for test assertion
